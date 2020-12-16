@@ -10,7 +10,7 @@
                 <div class="pb__header__inner">
                     <div class="pb__header__tabs">
                         <button type="button" class="ml-2 inline-block rounded-lg font-medium leading-none py-2 px-3 focus:outline-none text-gray-600">
-                            <svg class="w-5 h-5" @click.prevent="refresh" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg :class="{'animate-spin' : loading}" class="w-5 h-5 -scale-x-1" @click.prevent="refresh" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                         </button>
@@ -41,7 +41,7 @@
                     <slot name="setup"></slot>
                 </div>
                 <div ref="container" v-show="activeTabIndex === 1" class="pb__container__tab pb__container__tab--iframe">
-                    <iframe ref="iframe" height="600" :src="src" class="pb__container__iframe"></iframe>
+                    <iframe @load="loading = false" ref="iframe" height="600" :src="src" class="pb__container__iframe"></iframe>
                     <div v-if="moving" class="pb__container__iframe-shield"></div>
                     <div v-if="showGuides">
                         <div v-for="(guide,index) in snapGuides" :key="index" :style="{left: guide+'px'}" class="absolute top-0 bottom-0 border-r border-dashed border-gray-300"></div>
@@ -117,6 +117,7 @@
                 fullScreen: false,
                 screenSize: 0,
                 lastClickIsHandle: false,
+                loading: true,
                 cb: '',
                 boundingBox: {
                     x1: 0,
@@ -160,6 +161,7 @@
         },
         methods: {
             refresh() {
+              this.loading = true;
                 this.cb = Math.round(new Date().getTime() / 1000);
             },
             setGuidePoints() {
